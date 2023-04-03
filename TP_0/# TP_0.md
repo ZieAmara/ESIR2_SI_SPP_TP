@@ -10,6 +10,6 @@ En exécutant ce programme, nous observons des sorties de console incorrectes, o
 
 ### Reponse 2
 
-Dans cette version modifiée, nous avons encapsulé les accès à la variable partagée dans des blocs synchronized pour synchroniser l'accès concurrent à la variable partagée.
+on crée un verrou réentrant en utilisant la classe `ReentrantLock`. La méthode `lock()` est appelée pour acquérir le verrou avant l'exécution de la section critique, tandis que la méthode `unlock()` est appelée pour libérer le verrou après l'exécution de la section critique. La clause try-finally garantit que le verrou est toujours libéré, même en cas d'exception dans la section critique.
 
-En mesurant le temps d'exécution de ce programme, nous avvons utiliser la méthode System.currentTimeMillis() pour mesurer le temps de début et de fin du programme, et calculer la différence pour obtenir le temps d'exécution.
+nous avons utilisé la méthode `System.currentTimeMillis()` pour mesurer le temps de début et de fin du programme, et calculer la différence pour obtenir le temps d'exécution.
