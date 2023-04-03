@@ -2,20 +2,28 @@ package ESIR2_SI_SPP_TP.TP_0;
 
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class SharedVariableExample {
     private static long sharedVariable = 0;
-    private static Lock lock = new ReentrantLock();
+    // Reentrant lock
+    private static Lock lock_1 = new ReentrantLock();
+    
+    // ReentrantReadWriteLock
+    private static ReentrantReadWriteLock lock_2 = new ReentrantReadWriteLock();
+
 
     static class IncrementThread extends Thread {
         @Override
         public void run() {
-            for (int i = 0; i < 100000; i++) {
-                lock.lock();
+            for (int i = 0; i <= 100000; i++) {
+                // lock_1.lock();
+                lock_2.writeLock().lock();
                 try {
                     sharedVariable++;
                 } finally {
-                    lock.unlock();
+                    // lock_1.unlock();
+                    lock_2.writeLock().unlock();
                 }
             }
         }
@@ -24,13 +32,15 @@ public class SharedVariableExample {
     static class ReadThread extends Thread {
         @Override
         public void run() {
-            for (int i = 0; i < 100000; i++) {
+            for (int i = 0; i <= 100000; i++) {
                 if (i % 20000 == 0) {
-                    lock.lock();
+                    // lock_1.lock();
+                    lock_2.readLock().lock();
                     try {
-                        System.out.println("Thread " + getId() + ": " + sharedVariable);
+                        System.out.println("Thread " + i + ": " + sharedVariable);
                     } finally {
-                        lock.unlock();
+                        // lock_1.unlock();
+                        lock_2.readLock().unlock();
                     }
                 }
             }
@@ -55,6 +65,6 @@ public class SharedVariableExample {
         long endTime = System.currentTimeMillis();
         // print the total execution time
         long totalTime = endTime - startTime;
-        System.out.println("Total execution time: " + totalTime + " ms");
+        System.out.println("\t\t\tTotal execution time: " + totalTime + " ms");
     }
 }
