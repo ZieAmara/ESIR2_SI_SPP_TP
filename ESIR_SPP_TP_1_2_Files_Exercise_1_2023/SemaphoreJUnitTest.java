@@ -9,7 +9,7 @@ public class SemaphoreJUnitTest {
   @Before
   public void obtainSemaphoreImplementation() 
     throws ClassNotFoundException {
-    mySemImpl = Class.forName(System.getProperty("SemaphoreImplClass"));
+    mySemImpl = Class.forName("SemImpl2");/*System.getProperty("SemaphoreImplClass") */
   }
 
   private SemaphoreInterface createSemaphore() 

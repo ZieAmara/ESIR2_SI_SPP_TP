@@ -12,18 +12,17 @@ public class SharedVariableExample {
     // ReentrantReadWriteLock
     private static ReentrantReadWriteLock lock_2 = new ReentrantReadWriteLock();
 
-
     static class IncrementThread extends Thread {
         @Override
         public void run() {
-            for (int i = 0; i <= 100000; i++) {
-                // lock_1.lock();
-                lock_2.writeLock().lock();
+            for (int i = 1; i <= 1000; i++) {
+                lock_1.lock();
+                // lock_2.writeLock().lock();
                 try {
                     sharedVariable++;
                 } finally {
-                    // lock_1.unlock();
-                    lock_2.writeLock().unlock();
+                    lock_1.unlock();
+                    // lock_2.writeLock().unlock();
                 }
             }
         }
@@ -32,15 +31,15 @@ public class SharedVariableExample {
     static class ReadThread extends Thread {
         @Override
         public void run() {
-            for (int i = 0; i <= 100000; i++) {
-                if (i % 20000 == 0) {
-                    // lock_1.lock();
-                    lock_2.readLock().lock();
+            for (int i = 1; i <= 1000; i++) {
+                if (i % 200 == 0) {
+                    lock_1.lock();
+                    // lock_2.readLock().lock();
                     try {
                         System.out.println("Thread " + i + ": " + sharedVariable);
                     } finally {
-                        // lock_1.unlock();
-                        lock_2.readLock().unlock();
+                        lock_1.unlock();
+                        // lock_2.readLock().unlock();
                     }
                 }
             }
@@ -52,13 +51,27 @@ public class SharedVariableExample {
         long startTime = System.currentTimeMillis();
 
         // Create 5 threads that increment the shared variable 
+        IncrementThread [] incrementThreads = new IncrementThread[5];
         for (int i = 0; i < 5; i++) {
-            new IncrementThread().start();
+            incrementThreads[i] = new IncrementThread();
+            Thread.sleep(1);
+            incrementThreads[i].start();
         }
 
         // Create 15 threads that read and print the shared variable
+        ReadThread [] readThreads = new ReadThread[15];
         for (int i = 0; i < 15; i++) {
-            new ReadThread().start();
+            readThreads[i] = new ReadThread();
+            Thread.sleep(1);
+            readThreads[i].start();
+        }
+
+        // wait for the threads to finish
+        for (int i = 0; i < 5; i++) {
+            incrementThreads[i].join();
+        }
+        for (int i = 0; i < 15; i++) {
+            readThreads[i].join();
         }
 
         // end's the time
